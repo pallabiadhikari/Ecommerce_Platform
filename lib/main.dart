@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool isDark = false;
 
   void changeTheme() {
@@ -33,7 +32,7 @@ class _MyAppState extends State<MyApp> {
             : Brightness.light,
       ),
 
-      home: HomePage(
+      home: HomeScreen(
         onThemeChange: changeTheme,
       ),
     );
