@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-
-import '../models/product.dart';
-import '../widgets/product_card.dart';
-import 'cart_screen.dart';
+import '../../data/product_data.dart';
+import '../../widgets/category_chip.dart';
+import '../../models/product.dart';
+import '../../widgets/search_bar_widget.dart';
+import '../../widgets/product_card.dart';
+import '../cart/cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onThemeChange;
@@ -20,101 +22,155 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
   String searchText = '';
+  String selectedCategory = "All";
 
   List<Map<String, String>> cartItems = [];
-
-  final List<Product> products = [
-    Product(
-      name: "Gold Ring",
-      price: "\$50",
-      image: "assets/images/ring.jpg",
-    ),
-    Product(
-      name: "Pearl Necklace",
-      price: "\$80",
-      image: "assets/images/necklace.jpg",
-    ),
-    Product(
-      name: "Silver Bracelet",
-      price: "\$35",
-      image: "assets/images/bracelet.jpg",
-    ),
-    Product(
-      name: "Diamond Earrings",
-      price: "\$120",
-      image: "assets/images/earrings.jpg",
-    ),
-  ];
-
-  Widget categoryChip(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: Chip(
-        label: Text(text),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final filteredProducts = products.where((product) {
-      return product.name
-          .toLowerCase()
-          .contains(searchText.toLowerCase());
-    }).toList();
+
+  bool searchMatch = product.name
+      .toLowerCase()
+      .contains(searchText.toLowerCase());
+
+  bool categoryMatch =
+      selectedCategory == "All" ||
+      product.category == selectedCategory;
+
+  return searchMatch && categoryMatch;
+
+}).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Infinia Jewelry",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: widget.onThemeChange,
-            icon: const Icon(Icons.color_lens),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite_border),
-          ),
-        ],
-      ),
+  title: const Text(
+    "Infinia Jewelry",
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+  centerTitle: true,
+  actions: [
+    IconButton(
+      onPressed: widget.onThemeChange,
+      icon: const Icon(Icons.color_lens),
+    ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Search jewelry...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+    Stack(
+      children: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CartScreen(
+                  cartItems: cartItems,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.shopping_cart),
+        ),
+
+        if (cartItems.isNotEmpty)
+          Positioned(
+            right: 6,
+            top: 6,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                cartItems.length.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
-
+      ],
+    ),
+  ],
+),
+      body: Column(
+        children: [
+          SearchBarWidget(
+  onChanged: (value) {
+    setState(() {
+      searchText = value;
+    });
+  },
+),
           SizedBox(
             height: 50,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                categoryChip("Rings"),
-                categoryChip("Necklaces"),
-                categoryChip("Bracelets"),
-                categoryChip("Earrings"),
-                categoryChip("Watches"),
-              ],
+                CategoryChip(
+  text: "All",
+  isSelected: selectedCategory == "All",
+  onTap: () {
+    setState(() {
+      selectedCategory = "All";
+    });
+  },
+),
+
+CategoryChip(
+  text: "Rings",
+  isSelected: selectedCategory == "Rings",
+  onTap: () {
+    setState(() {
+      selectedCategory = "Rings";
+    });
+  },
+),
+
+CategoryChip(
+  text: "Necklaces",
+  isSelected: selectedCategory == "Necklaces",
+  onTap: () {
+    setState(() {
+      selectedCategory = "Necklaces";
+    });
+  },
+),
+
+CategoryChip(
+  text: "Bracelets",
+  isSelected: selectedCategory == "Bracelets",
+  onTap: () {
+    setState(() {
+      selectedCategory = "Bracelets";
+    });
+  },
+),
+
+CategoryChip(
+  text: "Earrings",
+  isSelected: selectedCategory == "Earrings",
+  onTap: () {
+    setState(() {
+      selectedCategory = "Earrings";
+    });
+  },
+),
+
+CategoryChip(
+  text: "Watches",
+  isSelected: selectedCategory == "Watches",
+  onTap: () {
+    setState(() {
+      selectedCategory = "Watches";
+    });
+  },
+),
+                ],
             ),
           ),
 
